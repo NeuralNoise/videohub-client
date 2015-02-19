@@ -21,6 +21,11 @@ class VideohubVideoTests(TestCase):
             slug = slugify(self.video.title)
             self.assertEquals(hub_url, "http://onionstudios.com/video/{}-{}".format(slug, self.video.id))
 
+    def test_embed_url(self):
+        with self.settings(VIDEOHUB_EMBED_URL_TEMPLATE="http://onionstudios.com/embed?id={hub_id}"):
+            embed_url = self.video.get_embed_url()
+            self.assertEquals(embed_url, "http://onionstudios.com/embed?id={}".format(self.video.id))
+
     def test_hub_url_serializer(self):
         """Make sure we send along the hub_url in the serializer."""
         with self.settings(VIDEOHUB_VIDEO_URL_TEMPLATE="http://onionstudios.com/video/{slug}-{hub_id}"):

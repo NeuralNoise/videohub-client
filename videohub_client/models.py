@@ -20,3 +20,9 @@ class VideohubVideo(models.Model):
             settings, "VIDEOHUB_VIDEO_URL_TEMPLATE",
             "http://onionstudios.com/video/{slug}-{hub_id}")
         return hub_url_template.format(slug=slug, hub_id=self.id)
+
+    def get_embed_url(self):
+        hub_url_template = getattr(
+            settings, "VIDEOHUB_EMBED_URL_TEMPLATE",
+            "http://onionstudios.com/embed?id={hub_id}")
+        return hub_url_template.format(hub_id=self.id)
