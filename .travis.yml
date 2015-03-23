@@ -1,0 +1,14 @@
+language: python
+
+python:
+  - '2.7'
+
+cache:
+  directories:
+    - $HOME/.pip-cache/
+
+install:
+  - pip install --download-cache $HOME/.pip-cache -r requirements.txt
+
+script:
+  - 'python runtests.py'
