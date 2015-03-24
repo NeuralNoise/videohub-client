@@ -7,6 +7,8 @@ from .models import VideohubVideo
 class VideohubVideoSerializer(serializers.ModelSerializer):
     image = ImageFieldSerializer(caption_field="_image_caption", alt_field="_image_alt", required=False)
     hub_url = serializers.CharField(source="get_hub_url", read_only=True)
+    embed_url = serializers.CharField(source="get_embed_url", read_only=True)
+    api_url = serializers.CharField(source="get_api_url", read_only=True)
 
     class Meta:
         model = VideohubVideo
