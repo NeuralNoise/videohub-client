@@ -6,7 +6,9 @@ except ImportError:
 from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
+
 from djbetty.fields import ImageField
+
 import requests
 
 
@@ -112,7 +114,16 @@ class VideohubVideo(models.Model):
         :rtype: str
         """
         url = getattr(settings, "VIDEOHUB_VIDEO_URL", self.DEFAULT_VIDEOHUB_VIDEO_URL)
-        path = slugify("{}-{}".format(self.title, self.id))
+
+        # slugify needs ascii
+        ascii_title = ""
+        if isinstance(self.title, str):
+            ascii_title = self.title
+        elif isinstance(self.title, unicode):
+            ascii_title = self.title.encode('ascii', 'replace')
+
+        path = slugify("{}-{}".format(ascii_title, self.id))
+
         return url.format(path)
 
     def get_embed_url(self):
