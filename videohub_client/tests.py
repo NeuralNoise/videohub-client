@@ -40,6 +40,19 @@ class VideohubVideoTests(TestCase):
                 embed_url,
                 "http://onionstudios.com/embed?id={}".format(self.video.id))
 
+    def test_embed_url_with_targeting(self):
+        with self.settings(VIDEOHUB_EMBED_URL="http://onionstudios.com/embed?id={}"):
+            targeting = {
+                'target_host_channel': 'specialcoverage',
+                'target_special_coverage': 'joe-biden'
+            }
+            embed_url = self.video.get_embed_url(targeting=targeting)
+            self.assertEquals(
+                embed_url,
+                ("http://onionstudios.com/embed?id={}&target_host_channel=specialcoverage"
+                 "&target_special_coverage=joe-biden".format(self.video.id))
+            )
+
     def test_api_url(self):
         with self.settings(VIDEOHUB_API_URL="http://onionstudios.com/api/v0/videos/{}"):
             api_url = self.video.get_api_url()

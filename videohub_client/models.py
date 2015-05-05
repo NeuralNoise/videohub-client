@@ -126,14 +126,19 @@ class VideohubVideo(models.Model):
 
         return url.format(path)
 
-    def get_embed_url(self):
+    def get_embed_url(self, targeting=None):
         """gets a canonical path to an embedded iframe of the video from the hub
 
         :return: the path to create an embedded iframe of the video
         :rtype: str
         """
         url = getattr(settings, "VIDEOHUB_EMBED_URL", self.DEFAULT_VIDEOHUB_EMBED_URL)
-        return url.format(self.id)
+        url = url.format(self.id)
+        if targeting is not None:
+            for k, v in targeting.items():
+                url += '&{0}={1}'.format(k, v)
+        return url
+
 
     def get_api_url(self):
         """gets a canonical path to the api detail url of the video on the hub
