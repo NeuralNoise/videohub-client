@@ -8,8 +8,8 @@ cache:
     - $HOME/.pip-cache/
 
 install:
-  - pip install --download-cache $HOME/.pip-cache -r requirements.txt
+  - pip install -e .
+  - pip install "file://$(pwd)#egg=videohub-client[dev]"
 
 script:
   - 'python runtests.py'
-

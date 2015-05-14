@@ -139,7 +139,6 @@ class VideohubVideo(models.Model):
                 url += '&{0}={1}'.format(k, v)
         return url
 
-
     def get_api_url(self):
         """gets a canonical path to the api detail url of the video on the hub
 
