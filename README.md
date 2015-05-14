@@ -13,7 +13,8 @@ Once you clone this project and `cd` into its root, to run the tests:
 
 2. Install requirements
   ```bash
-  $ pip install -r requirements.txt
+  $ pip install -e .
+  $ pip install "file://$(pwd)#egg=videohub-client[dev]"
   ```
 
 3. Run tests

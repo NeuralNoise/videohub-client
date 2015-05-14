@@ -16,8 +16,11 @@ author_email = "tech@theonion.com"
 license = "BSD"
 requires = [
     "Django>=1.7.1",
-    "django-betty-cropper>=0.1.4",
-    "django-bulbs==0.4.6",
+    "django-betty-cropper>=0.1.9",
+]
+
+dev_requires = [
+    "djangorestframework>=3.1"
 ]
 
 
@@ -57,9 +60,9 @@ def get_package_data(package):
 if sys.argv[-1] == "publish":
     os.system("python setup.py sdist upload")
     args = {"version": get_version(package)}
-    print "You probably want to also tag the version now:"
-    print "  git tag -a %(version)s -m 'version %(version)s'" % args
-    print "  git push --tags"
+    print("You probably want to also tag the version now:")
+    print("  git tag -a %(version)s -m 'version %(version)s'" % args)
+    print("  git push --tags")
     sys.exit()
 
 
@@ -73,5 +76,8 @@ setup(
     author_email=author_email,
     packages=get_packages(package),
     package_data=get_package_data(package),
-    install_requires=requires
+    install_requires=requires,
+    extras_require={
+        'dev': dev_requires,
+    },
 )
