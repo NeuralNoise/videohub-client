@@ -1,6 +1,8 @@
 from djbetty.serializers import ImageFieldSerializer
 from rest_framework import serializers
 
+from django.core.exceptions import ObjectDoesNotExist
+
 from .models import VideohubVideo
 
 
@@ -20,7 +22,7 @@ class VideohubVideoSerializer(serializers.ModelSerializer):
         if identity:
             try:
                 obj = self.opts.model.objects.get(id=identity)
-            except self.opts.model.DoesNotExist:
+            except ObjectDoesNotExist:
                 pass
             else:
                 dirty = False
