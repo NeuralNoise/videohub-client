@@ -1,8 +1,6 @@
 from djbetty.serializers import ImageFieldSerializer
 from rest_framework import serializers
 
-from django.core.exceptions import ObjectDoesNotExist
-
 from .models import VideohubVideo
 
 
@@ -19,10 +17,16 @@ class VideohubVideoSerializer(serializers.ModelSerializer):
         """Prevent DRF from creating a new row."""
         identity = data.get("id")
         obj = None
+
+        if hasattr(self, "opts"):
+            ModelClass = self.opts.model
+        else:
+            ModelClass = self.Meta.model
+
         if identity:
             try:
-                obj = self.opts.model.objects.get(id=identity)
-            except ObjectDoesNotExist:
+                obj = ModelClass.objects.get(id=identity)
+            except ModelClass.DoesNotExist:
                 pass
             else:
                 dirty = False
