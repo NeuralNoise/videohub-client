@@ -6,14 +6,13 @@ from .models import VideohubVideo
 
 class VideohubVideoSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField()
-    image = ImageFieldSerializer(required=False, allow_null=True)
+    image = ImageFieldSerializer(allow_null=True, default={})
     hub_url = serializers.CharField(source="get_hub_url", read_only=True)
     embed_url = serializers.CharField(source="get_embed_url", read_only=True)
     api_url = serializers.CharField(source="get_api_url", read_only=True)
 
     class Meta:
         model = VideohubVideo
-
 
     def save(self, **kwargs):
         """
