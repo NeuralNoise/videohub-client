@@ -5,7 +5,6 @@ except ImportError:
 
 from django.conf import settings
 from django.db import models
-from django.template.defaultfilters import slugify
 
 from djbetty.fields import ImageField
 
@@ -23,10 +22,10 @@ class VideohubVideo(models.Model):
     _image_caption = models.CharField(null=True, blank=True, editable=False, max_length=255)
 
     # default values
-    DEFAULT_VIDEOHUB_VIDEO_URL = "http://videohub.local/videos/{}"
+    DEFAULT_VIDEOHUB_VIDEO_URL = "http://videohub.local/videos/x-{}"
     DEFAULT_VIDEOHUB_EMBED_URL = "http://videohub.local/embed?id={}"
-    DEFAULT_VIDEOHUB_API_URL = "http://videohub.local/api/v0/videos/{}"
-    DEFAULT_VIDEOHUB_API_SEARCH_URL = "http://videohub.local/api/v0/videos/search"
+    DEFAULT_VIDEOHUB_API_URL = "http://videohub.local/api/videos/{}/"
+    DEFAULT_VIDEOHUB_API_SEARCH_URL = "http://videohub.local/api/videos/?search={}"
 
     @classmethod
     def get_serializer_class(cls):
@@ -74,36 +73,53 @@ class VideohubVideo(models.Model):
         """
         # construct url
         url = getattr(settings, "VIDEOHUB_API_SEARCH_URL", cls.DEFAULT_VIDEOHUB_API_SEARCH_URL)
+
         # construct auth headers
         headers = {
             "Content-Type": "application/json",
             "Authorization": settings.VIDEOHUB_API_TOKEN,
         }
-        # construct payload
-        payload = {
-            "query": query,
-        }
+
+        # add query
+        url = url.format(query)
+
+        # check for additional params
+        if filters or status or sort or size or page:
+            additional_params = ""
+        else:
+            additional_params = None
+
         if filters:
-            assert isinstance(filters, dict)
-            payload["filters"] = filters
+            for key, value in filters.items():
+                additional_params += "&{}={}".format(key, value)
+
         if status:
-            assert isinstance(status, basestring)
-            payload.setdefault("filters", {})
-            payload["filters"]["status"] = status
+            additional_params += "&status={}".format(status)
+
         if sort:
-            assert isinstance(sort, dict)
-            payload["sort"] = sort
+            for key, value in sort.items():
+                if value == "desc":
+                    additional_params += "&ordering=-{}".format(key)
+                else:
+                    additional_params += "&ordering={}".format(key)
+
         if size:
-            assert isinstance(size, (basestring, int))
-            payload["size"] = size
+            additional_params += "&page_size={}".format(size)
+
         if page:
-            assert isinstance(page, (basestring, int))
-            payload["page"] = page
+            additional_params += "&page={}".format(page)
+
+        # add additional params if necessary
+        if additional_params:
+            url += additional_params
+
         # send request
-        res = requests.post(url, data=json.dumps(payload), headers=headers)
+        res = requests.get(url, headers=headers)
+
         # raise if not 200
         if res.status_code != 200:
             res.raise_for_status()
+
         # parse and return response
         return json.loads(res.content)
 
@@ -114,17 +130,7 @@ class VideohubVideo(models.Model):
         :rtype: str
         """
         url = getattr(settings, "VIDEOHUB_VIDEO_URL", self.DEFAULT_VIDEOHUB_VIDEO_URL)
-
-        # slugify needs ascii
-        ascii_title = ""
-        if isinstance(self.title, str):
-            ascii_title = self.title
-        elif isinstance(self.title, unicode):
-            ascii_title = self.title.encode('ascii', 'replace')
-
-        path = slugify("{}-{}".format(ascii_title, self.id))
-
-        return url.format(path)
+        return url.format(self.pk)
 
     def get_embed_url(self):
         """gets a canonical path to an embedded iframe of the video from the hub
@@ -133,7 +139,7 @@ class VideohubVideo(models.Model):
         :rtype: str
         """
         url = getattr(settings, "VIDEOHUB_EMBED_URL", self.DEFAULT_VIDEOHUB_EMBED_URL)
-        return url.format(self.id)
+        return url.format(self.pk)
 
     def get_api_url(self):
         """gets a canonical path to the api detail url of the video on the hub
@@ -142,4 +148,4 @@ class VideohubVideo(models.Model):
         :rtype: str
         """
         url = getattr(settings, "VIDEOHUB_API_URL", self.DEFAULT_VIDEOHUB_API_URL)
-        return url.format(self.id)
+        return url.format(self.pk)

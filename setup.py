@@ -15,9 +15,9 @@ author = "Onion Tech Team"
 author_email = "tech@theonion.com"
 license = "BSD"
 requires = [
-    "Django>=1.7.1",
-    "django-betty-cropper>=0.1.4",
-    "django-bulbs==0.4.6",
+    "Django>1.8,<1.9",
+    "django-betty-cropper",
+    "django-bulbs",
 ]
 
 
