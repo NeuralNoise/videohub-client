@@ -40,6 +40,13 @@ class VideohubVideoTests(TestCase):
                 embed_url,
                 "http://onionstudios.com/embed?id={}".format(self.video.id))
 
+    def test_embed_url_with_recirc(self):
+        with self.settings(VIDEOHUB_EMBED_URL="http://onionstudios.com/embed?id={}"):
+            embed_url = self.video.get_embed_url(recirc=3)
+            self.assertEquals(
+                embed_url,
+                "http://onionstudios.com/embed?id={}&recirc=3".format(self.video.id))
+
     def test_embed_url_with_targeting(self):
         with self.settings(VIDEOHUB_EMBED_URL="http://onionstudios.com/embed?id={}"):
             targeting = {

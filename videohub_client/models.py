@@ -138,7 +138,7 @@ class VideohubVideo(models.Model):
             for k, v in targeting.items():
                 url += '&{0}={1}'.format(k, v)
         if recirc is not None:
-            url += '&recirc={1}'.format(recirc)
+            url += '&recirc={0}'.format(recirc)
         return url
 
     def get_api_url(self):
