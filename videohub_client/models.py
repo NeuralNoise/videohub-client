@@ -3,6 +3,8 @@ try:
 except ImportError:
     import simplejson as json
 
+from djes.models import Indexable
+
 from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -12,7 +14,7 @@ from djbetty.fields import ImageField
 import requests
 
 
-class VideohubVideo(models.Model):
+class VideohubVideo(Indexable):
     """A reference to a video on the onion videohub."""
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=512)
@@ -29,6 +31,11 @@ class VideohubVideo(models.Model):
     DEFAULT_VIDEOHUB_EMBED_URL = "http://videohub.local/embed?id={}"
     DEFAULT_VIDEOHUB_API_URL = "http://videohub.local/api/v0/videos/{}"
     DEFAULT_VIDEOHUB_API_SEARCH_URL = "http://videohub.local/api/v0/videos/search"
+
+    class Mapping:
+        class Meta:
+            # Exclude image until we actually need it, to avoid dealing with custom mappings
+            excludes = ('image',)
 
     @classmethod
     def get_serializer_class(cls):

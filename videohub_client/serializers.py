@@ -10,6 +10,7 @@ class VideohubVideoSerializer(serializers.ModelSerializer):
     hub_url = serializers.CharField(source="get_hub_url", read_only=True)
     embed_url = serializers.CharField(source="get_embed_url", read_only=True)
     api_url = serializers.CharField(source="get_api_url", read_only=True)
+    channel_id = serializers.IntegerField()
 
     class Meta:
         model = VideohubVideo

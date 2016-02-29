@@ -17,6 +17,7 @@ license = "BSD"
 requires = [
     "Django>=1.7.1",
     "django-betty-cropper>=0.1.9",
+    "djes>=0.1.108",
 ]
 
 dev_requires = [
