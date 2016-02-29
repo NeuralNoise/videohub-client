@@ -21,6 +21,8 @@ class VideohubVideo(models.Model):
     image = ImageField(null=True, blank=True, alt_field="_image_alt", caption_field="_image_caption")
     _image_alt = models.CharField(null=True, blank=True, editable=False, max_length=255)
     _image_caption = models.CharField(null=True, blank=True, editable=False, max_length=255)
+    # External FK on videohub. Temp workaround until metadata refactor.
+    channel_id = models.IntegerField(blank=True, null=True, default=None)
 
     # default values
     DEFAULT_VIDEOHUB_VIDEO_URL = "http://videohub.local/videos/{}"
@@ -147,5 +149,12 @@ class VideohubVideo(models.Model):
         :return: the path to the api detail of the video
         :rtype: str
         """
-        url = getattr(settings, "VIDEOHUB_API_URL", self.DEFAULT_VIDEOHUB_API_URL)
+        url = getattr(settings, 'VIDEOHUB_API_URL', None)
+        # Support alternate setting (used by most client projects)
+        if not url:
+            url = getattr(settings, 'VIDEOHUB_API_BASE_URL', None)
+            if url:
+                url = url.rstrip('/') + '/videos/{}'
+        if not url:
+            url = self.DEFAULT_VIDEOHUB_API_URL
         return url.format(self.id)

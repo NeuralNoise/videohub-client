@@ -1,15 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 from django.template.defaultfilters import slugify
 from django.test import TestCase
-from django.test.client import Client
-import requests
 
 from .models import VideohubVideo
 from .serializers import VideohubVideoSerializer
@@ -62,6 +55,13 @@ class VideohubVideoTests(TestCase):
 
     def test_api_url(self):
         with self.settings(VIDEOHUB_API_URL="http://onionstudios.com/api/v0/videos/{}"):
+            api_url = self.video.get_api_url()
+            self.assertEquals(
+                api_url,
+                "http://onionstudios.com/api/v0/videos/{}".format(self.video.id))
+
+    def test_api_url_alternate_setting(self):
+        with self.settings(VIDEOHUB_API_BASE_URL="http://onionstudios.com/api/v0/"):
             api_url = self.video.get_api_url()
             self.assertEquals(
                 api_url,
