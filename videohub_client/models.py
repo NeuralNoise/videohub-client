@@ -144,7 +144,7 @@ class VideohubVideo(Indexable):
         url = getattr(settings, "VIDEOHUB_EMBED_URL", self.DEFAULT_VIDEOHUB_EMBED_URL)
         url = url.format(self.id)
         if targeting is not None:
-            for k, v in targeting.items():
+            for k, v in sorted(targeting.items()):
                 url += '&{0}={1}'.format(k, v)
         if recirc is not None:
             url += '&recirc={0}'.format(recirc)
