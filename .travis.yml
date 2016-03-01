@@ -5,6 +5,9 @@ python:
   - '3.4'
   - '3.5'
 
+services:
+  - elasticsearch
+
 cache:
   directories:
     - $HOME/.pip-cache/
