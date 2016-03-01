@@ -3,6 +3,8 @@ try:
 except ImportError:
     import simplejson as json
 
+from djes.models import Indexable
+
 from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -12,7 +14,7 @@ from djbetty.fields import ImageField
 import requests
 
 
-class VideohubVideo(models.Model):
+class VideohubVideo(Indexable):
     """A reference to a video on the onion videohub."""
     id = models.IntegerField(primary_key=True)
     title = models.CharField(max_length=512)
@@ -21,12 +23,19 @@ class VideohubVideo(models.Model):
     image = ImageField(null=True, blank=True, alt_field="_image_alt", caption_field="_image_caption")
     _image_alt = models.CharField(null=True, blank=True, editable=False, max_length=255)
     _image_caption = models.CharField(null=True, blank=True, editable=False, max_length=255)
+    # External FK on videohub. Temp workaround until metadata refactor.
+    channel_id = models.IntegerField(blank=True, null=True, default=None)
 
     # default values
     DEFAULT_VIDEOHUB_VIDEO_URL = "http://videohub.local/videos/{}"
     DEFAULT_VIDEOHUB_EMBED_URL = "http://videohub.local/embed?id={}"
     DEFAULT_VIDEOHUB_API_URL = "http://videohub.local/api/v0/videos/{}"
     DEFAULT_VIDEOHUB_API_SEARCH_URL = "http://videohub.local/api/v0/videos/search"
+
+    class Mapping:
+        class Meta:
+            # Exclude image until we actually need it, to avoid dealing with custom mappings
+            excludes = ('image',)
 
     @classmethod
     def get_serializer_class(cls):
@@ -135,7 +144,7 @@ class VideohubVideo(models.Model):
         url = getattr(settings, "VIDEOHUB_EMBED_URL", self.DEFAULT_VIDEOHUB_EMBED_URL)
         url = url.format(self.id)
         if targeting is not None:
-            for k, v in targeting.items():
+            for k, v in sorted(targeting.items()):
                 url += '&{0}={1}'.format(k, v)
         if recirc is not None:
             url += '&recirc={0}'.format(recirc)
@@ -147,5 +156,12 @@ class VideohubVideo(models.Model):
         :return: the path to the api detail of the video
         :rtype: str
         """
-        url = getattr(settings, "VIDEOHUB_API_URL", self.DEFAULT_VIDEOHUB_API_URL)
+        url = getattr(settings, 'VIDEOHUB_API_URL', None)
+        # Support alternate setting (used by most client projects)
+        if not url:
+            url = getattr(settings, 'VIDEOHUB_API_BASE_URL', None)
+            if url:
+                url = url.rstrip('/') + '/videos/{}'
+        if not url:
+            url = self.DEFAULT_VIDEOHUB_API_URL
         return url.format(self.id)

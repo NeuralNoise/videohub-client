@@ -6,18 +6,18 @@ Some tools for referencing the videohub from our other properties
 Once you clone this project and `cd` into its root, to run the tests:
 
 1. Create a virtualenv and activate it:
-  ```bash
-  $ virtualenv .
-  $ source ./bin/activate
+  ```
+  virtualenv .
+  source ./bin/activate
   ```
 
 2. Install requirements
-  ```bash
-  $ pip install -e .
-  $ pip install "file://$(pwd)#egg=videohub-client[dev]"
+  ```
+  pip install -e .
+  pip install "file://$(pwd)#egg=videohub-client[dev]"
   ```
 
 3. Run tests
-  ```bash
-  $ ./runtests.py
+  ```
+  ./runtests.py
   ```

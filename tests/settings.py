@@ -1,7 +1,10 @@
+import os
+
 DEBUG = True
 
 DATABASES = {
     "default": {
+        "NAME": "videohub-client",
         "ENGINE": "django.db.backends.sqlite3"
     }
 }
@@ -11,11 +14,13 @@ INSTALLED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     # third parties
+    'djes',
     "djbetty",
+    # me
     "videohub_client",
 )
 
-MIDDLEWARE_CLASSES=(
+MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -25,3 +30,9 @@ MIDDLEWARE_CLASSES=(
 ),
 
 SECRET_KEY = "trustno1"
+
+ES_CONNECTIONS = {
+    "default": {
+        "hosts": [os.environ.get('ELASTICSEARCH_HOST', 'localhost')]
+    }
+}
