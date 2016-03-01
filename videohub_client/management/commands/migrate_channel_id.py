@@ -37,7 +37,7 @@ class Command(BaseCommand):
             if resp.ok:
                 channel = resp.json()['channel']
                 print('{} {} --> {} {}'.format(video.id,
-                                               video.title.encode('utf-8'),
+                                               video.title.strip().encode('utf-8'),
                                                channel['id'],
                                                channel['name'].encode('utf-8')
                                                ))
