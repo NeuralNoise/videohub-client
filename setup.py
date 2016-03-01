@@ -15,7 +15,7 @@ author = "Onion Tech Team"
 author_email = "tech@theonion.com"
 license = "BSD"
 requires = [
-    "Django>=1.7.1",
+    "Django>=1.7.1,<1.9",
     "django-betty-cropper>=0.1.9",
     "djes>=0.1.108",
 ]
