@@ -22,7 +22,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # If any video fails, continue trying the rest before we raise error
-        failed = False
+        failed = []
         for video in VideohubVideo.objects.filter(channel_id__isnull=True):
 
             url = video.get_api_url()
@@ -51,7 +51,9 @@ class Command(BaseCommand):
                     url,
                     resp.status_code,
                     resp.reason)))
-                failed = True
+                failed.append(video)
 
         if failed:
-            raise CommandError('Failed to update 1 or more videos')
+            raise CommandError('Failed to update {} video(s): {}'.format(
+                len(failed),
+                [f.id for f in failed]))
