@@ -1,5 +1,9 @@
 # videohub-client Change Log
 
+## Version 0.2.1
+
+- Fix: `VidehubVideo` serialization flattens channel ID
+
 ## Version 0.2.0
 
 ### Support for ES filtering of Videohub channel

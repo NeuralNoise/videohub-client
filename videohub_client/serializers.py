@@ -33,3 +33,10 @@ class VideohubVideoSerializer(serializers.ModelSerializer):
                 pass
 
         return super(VideohubVideoSerializer, self).save(**kwargs)
+
+    def to_internal_value(self, data):
+        # Channel info passed as nested object, but we just store integer ID
+        channel = data.get('channel')
+        if channel and 'id' in channel:
+            data['channel_id'] = channel['id']
+        return super(VideohubVideoSerializer, self).to_internal_value(data)
