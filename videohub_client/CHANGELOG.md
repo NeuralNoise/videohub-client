@@ -3,6 +3,9 @@
 ## Version 0.2.1
 
 - Fix: `VidehubVideo` serialization flattens channel ID
+- `migrate_channel_id` script fixes:
+    - `--check` mode OFF by default
+    - Better error handling, try all videos before failing
 
 ## Version 0.2.0
 
