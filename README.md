@@ -1,3 +1,9 @@
+# Deprecated 
+
+All functionality moved into [django-bulbs](https://github.com/theonion/django-bulbs)
+
+Original README Below
+
 # Videohub Client
 
 Some tools for referencing the videohub from our other properties
